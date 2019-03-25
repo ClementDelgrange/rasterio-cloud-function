@@ -1,6 +1,10 @@
 # rasterio-cloud-function
 Google Cloud Functions using rasterio to get data from rasters stored on Google Cloud Storage.
 
+You must activate the interoperability API for your Google Cloud Storage bucket 
+(once a bucket is created, go to the 'Settings' page > 'Interoperability' tab, and create a new key).
+ This give you the `GS_ACCESS_KEY_ID` and the `GS_SECRET_ACCESS_KEY`.
+ 
 ## Get the raster metadata
 ```bash
 gcloud functions deploy metadata --entry-point get_metadata --trigger-http --runtime python37 \
