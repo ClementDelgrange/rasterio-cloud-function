@@ -27,5 +27,12 @@ def get_metadata(request):
 
     with rasterio.open(filepath) as src:
         profile = src.profile
+    logging.info(f"Rasterio profile: {profile}")
 
-    return flask.jsonify(profile)
+    meta = {
+        **profile,
+        "crs": profile["crs"].to_string(),
+        "transform": list(profile["transform"])
+    }
+
+    return flask.jsonify(meta)
