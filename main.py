@@ -86,6 +86,7 @@ def get_data(request):
 
     array = rasterio_get_data(filepath, geojson)
     img = Image.fromarray(rio_plot.reshape_as_image(array))
+    logging.info("Image built")
     return flask.send_file(img, mimetype="image/png")
 
 
@@ -123,5 +124,6 @@ def rasterio_get_data(filepath, geojson):
             crop=True,
             filled=False
         )
+        logging.info(f"Array extracted from raster. Shape={array.shape}")
 
         return array.data
