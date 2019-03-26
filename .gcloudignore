@@ -1,0 +1,6 @@
+.gcloudignore
+.git
+.gitignore
+LICENSE
+README.md
+venv
