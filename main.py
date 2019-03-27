@@ -1,7 +1,9 @@
 import logging
 import json
+import io
+
 import flask
-from PIL import Image
+import PIL.Image
 
 import rasterio
 import rasterio.mask as rio_mask
@@ -85,9 +87,14 @@ def get_data(request):
     logging.info(f"Requested file: {filepath}")
 
     array = rasterio_get_data(filepath, geojson)
-    img = Image.fromarray(rio_plot.reshape_as_image(array))
+
+    img = PIL.Image.fromarray(rio_plot.reshape_as_image(array))
+    buf = io.BytesIO()
+    img.save(buf, format="PNG", optimize=True)
+    buf.seek(0)
     logging.info("Image built")
-    return flask.send_file(img, mimetype="image/png")
+
+    return flask.send_file(buf, mimetype="image/png", as_attachment=False)
 
 
 def rasterio_get_data(filepath, geojson):
