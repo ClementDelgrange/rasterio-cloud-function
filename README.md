@@ -5,7 +5,9 @@ You must activate the interoperability API for your Google Cloud Storage bucket
 (once a bucket is created, go to the 'Settings' page > 'Interoperability' tab, and create a new key).
  This give you the `GS_ACCESS_KEY_ID` and the `GS_SECRET_ACCESS_KEY`.
  
+ 
 ## Get the raster metadata
+### How to deploy
 ```bash
 gcloud functions deploy metadata --entry-point get_metadata --trigger-http --runtime python37 \
 --region $GCLOUD_REGION --project $GCLOUD_PROJECT_ID \
@@ -14,7 +16,15 @@ gcloud functions deploy metadata --entry-point get_metadata --trigger-http --run
 --set-env-vars CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 ```
 
+### How to execute
+Once it is deployed:
+```bash
+GET /metadata?filename=<filename>&bucket=<bucket>
+```
+
+
 ## Get raster data
+### How to deploy
 ```bash
 gcloud functions deploy get-data --entry-point get_data --trigger-http --runtime python37 --memory 1024MB \
 --region $GCLOUD_REGION --project $GCLOUD_PROJECT_ID \
@@ -22,3 +32,11 @@ gcloud functions deploy get-data --entry-point get_data --trigger-http --runtime
 --set-env-vars GS_SECRET_ACCESS_KEY=$GS_SECRET_ACCESS_KEY \ 
 --set-env-vars CURL_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 ```
+
+
+### How to execute
+```bash
+GET /get-data?filename=<filename>&bucket=<bucket>&geojson=<geojson>
+```
+
+where `<geojson>` is a GeoJSON feature. 
