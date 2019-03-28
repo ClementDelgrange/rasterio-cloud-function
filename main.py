@@ -6,8 +6,8 @@ import flask
 import PIL.Image
 
 import rasterio
-import rasterio.mask as rio_mask
-import rasterio.plot as rio_plot
+import rasterio.mask
+import rasterio.plot
 from rasterio.crs import CRS
 from fiona.transform import transform_geom
 
@@ -86,9 +86,13 @@ def get_data(request):
     filepath = f"gs://{bucket}/{filename}"
     logging.info(f"Requested file: {filepath}")
 
-    array = rasterio_get_data(filepath, geojson)
+    try:
+        array = rasterio_get_data(filepath, geojson)
+    except:
+        logging.error("Unable to get data", exc_info=True)
+        return flask.abort(404)
 
-    img = PIL.Image.fromarray(rio_plot.reshape_as_image(array))
+    img = PIL.Image.fromarray(rasterio.plot.reshape_as_image(array))
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
     buf.seek(0)
@@ -125,7 +129,7 @@ def rasterio_get_data(filepath, geojson):
             geometry = geojson["geometry"]
         logging.info(f"GeoJSON geometry: {geometry}")
 
-        array, _ = rio_mask.mask(
+        array, _ = rasterio.mask.mask(
             img,
             shapes=[geometry],
             crop=True,
